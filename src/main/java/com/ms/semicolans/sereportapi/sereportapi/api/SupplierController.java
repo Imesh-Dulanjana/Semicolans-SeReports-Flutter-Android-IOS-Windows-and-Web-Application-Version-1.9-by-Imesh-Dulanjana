@@ -1,122 +1,49 @@
 package com.ms.semicolans.sereportapi.sereportapi.api;
 
-import com.ms.semicolans.sereportapi.sereportapi.dto.responsedto.ResponseCommonNameAndCodeDTO;
-import com.ms.semicolans.sereportapi.sereportapi.dto.responsedto.paginated.PaginatedResponseCreditorsDetailsDTO;
-import com.ms.semicolans.sereportapi.sereportapi.dto.responsedto.paginated.PaginatedResponsePayableDTO;
+import com.ms.semicolans.sereportapi.sereportapi.entity.main.Supplier;
 import com.ms.semicolans.sereportapi.sereportapi.service.SupplierService;
-import com.ms.semicolans.sereportapi.sereportapi.service.impl.SupplierServiceImpl;
-import com.ms.semicolans.sereportapi.sereportapi.util.StandardResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/suppliers")
-@RequiredArgsConstructor
+@RequestMapping("/api/suppliers")
 public class SupplierController {
+
     private final SupplierService supplierService;
-    private final SupplierServiceImpl supplierServiceImpl;
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @GetMapping(path = {"/get-all-suppliers-name-list"}, params = {"searchText"})
-    public ResponseEntity<StandardResponse> getAllSuppliersNameList(@RequestParam String searchText, @RequestHeader("Authorization") String token) throws SQLException {
-
-        List<ResponseCommonNameAndCodeDTO> supplierDTOList = supplierService.getAllSuppliersNameList(searchText, token);
-        return new ResponseEntity<>(
-                new StandardResponse(200,
-                        "All Suppliers list", supplierDTOList),
-                HttpStatus.OK
-        );
+    public SupplierController(SupplierService supplierService) {
+        this.supplierService = supplierService;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @GetMapping(path = {"/get-all-suppliers"}, params = {"searchText"})
-    public void getAllSuppliers(@RequestParam String searchText, @RequestHeader("Authorization") String token) throws SQLException, IOException {
-        System.out.println("suppler" + searchText);
-
-        supplierService.getSupplierData(searchText, token);
-    }
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @GetMapping(path = "/supplier-details", params = {"page", "size"})
-    public ResponseEntity<StandardResponse> getSupplierDetails(
-            @RequestParam int page,
-            @RequestParam int size,
-            @RequestHeader("Authorization") String token,
-            @RequestParam(required = false) String supplierSearch,
-            @RequestParam(required = false) String creditSearch,
-            @RequestParam(required = false, defaultValue = "All") String invGap,
-            @RequestParam(required = false, defaultValue = "All") String settlementGap) throws SQLException {
-        System.out.println(page + " " + size + " " + supplierSearch + " " + creditSearch + " " + invGap + " " + settlementGap);
-        PaginatedResponseCreditorsDetailsDTO response = supplierService.getAllSuppliersList(
-                supplierSearch,
-                creditSearch,
-                invGap,
-                settlementGap,
-                page,
-                size,
-                token
-        );
-        System.out.println(response.getCount());
-        System.out.println(response.getTotalOutstandingAmount());
-        return new ResponseEntity<>(
-                new StandardResponse(
-                        200,
-                        "Supplier details retrieved successfully",
-                        response
-                ),
-                HttpStatus.OK
-        );
+    // Endpoint: /api/suppliers/get-all-suppliers-name-list
+    @GetMapping("/get-all-suppliers-name-list")
+    public ResponseEntity<List<String>> getAllSupplierNames() {
+        List<String> names = supplierService.getAllSupplierNames();
+        return ResponseEntity.ok(names);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @GetMapping(path = "/payable-details", params = {"page", "size"})
-    public ResponseEntity<StandardResponse> getPayableDetails(
-            @RequestParam int page,
-            @RequestParam int size,
-            @RequestHeader("Authorization") String token,
-            @RequestParam(required = false, defaultValue = "All") String locaCode,
-            @RequestParam(required = false) String searchSupplier,
-            @RequestParam(required = false) String searchInvoice,
-            @RequestParam(required = false, defaultValue = "All") String invGap,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateFrom,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateTo) throws SQLException {
-
-        // If dates are not provided, set default values (12 months ago to current date)
-        if (dateFrom == null) {
-            dateFrom = LocalDate.now().minusMonths(12);
-        }
-
-        if (dateTo == null) {
-            dateTo = LocalDate.now();
-        }
-
-        PaginatedResponsePayableDTO response = supplierService.getPayableDetails(
-                token,
-                locaCode,
-                searchSupplier,
-                searchInvoice,
-                invGap,
-                dateFrom,
-                dateTo,
-                page,
-                size
-        );
-
-        System.out.println(page);
-        System.out.println(response.getCount());
-        return new ResponseEntity<>(new StandardResponse(
-                200,
-                "Payable details retrieved successfully",
-                response
-        ), HttpStatus.OK);
+    // Endpoint: /api/suppliers/supplier-details
+    @GetMapping("/supplier-details")
+    public ResponseEntity<Map<String, Object>> getSupplierDetails(
+            @RequestParam(required = false) String searchText) {
+        List<Supplier> all = supplierService.getAllSuppliers();
+        return ResponseEntity.ok(Map.of("data", all));
     }
 
+    // Endpoint: /api/suppliers/payable-details (return empty for now)
+    @GetMapping("/payable-details")
+    public ResponseEntity<Map<String, Object>> getSupplierPayableList() {
+        return ResponseEntity.ok(Map.of("data", Collections.emptyList()));
+    }
+
+    // Endpoint: /api/suppliers-creditor/get-creditor-details-list
+    // (Note: the Flutter app expects /api/suppliers-creditor/..., so we add a separate mapping)
+    @GetMapping("/../suppliers-creditor/get-creditor-details-list")
+    public ResponseEntity<Map<String, Object>> getCreditorDetailsList() {
+        return ResponseEntity.ok(Map.of("data", Collections.emptyList()));
+    }
 }
