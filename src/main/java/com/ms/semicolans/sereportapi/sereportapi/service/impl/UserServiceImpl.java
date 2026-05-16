@@ -1,7 +1,12 @@
 package com.ms.semicolans.sereportapi.sereportapi.service.impl;
 
-import com.ms.semicolans.sereportapi.sereportapi.dto.responsedto.ResponseCompanyUserDataDTO;
-import com.ms.semicolans.sereportapi.sereportapi.dto.responsedto.ResponseUserDTO;
+import java.sql.SQLException;
+import java.util.Optional;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.stereotype.Service;
+
 import com.ms.semicolans.sereportapi.sereportapi.entity.main.CompanyDetails;
 import com.ms.semicolans.sereportapi.sereportapi.entity.main.UserAccounts;
 import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtConfig;
@@ -9,15 +14,11 @@ import com.ms.semicolans.sereportapi.sereportapi.repo.CompanyDetailsRepo;
 import com.ms.semicolans.sereportapi.sereportapi.repo.UserAccountsRepo;
 import com.ms.semicolans.sereportapi.sereportapi.service.CompanyUserService;
 import com.ms.semicolans.sereportapi.sereportapi.service.UserService;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
-import java.sql.SQLException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,13 +36,13 @@ public class UserServiceImpl implements UserService {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(realToken);
         String username = claimsJws.getBody().getSubject();
-        Optional<CompanyDetails> selectedUser = companyDetailsRepo.findByUserName(username);
+        Optional<CompanyDetails> selectedUser = companyDetailsRepo.findByUsername(username);
         return selectedUser.get().getCompanyName();
     }
 
     @Override
     public Object getUserAccountWithPermissions(String username) throws SQLException {
-        Optional<UserAccounts> userAccount = userAccountsRepo.findByUserName(username);
+        List<UserAccounts> users = userAccountsRepo.findByUserName(username);
         if (!userAccount.isPresent()) {
             throw new SQLException("User not found: " + username);
         }
