@@ -1,3 +1,4 @@
+import 'dart:async'; // <-- ADD THIS
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
