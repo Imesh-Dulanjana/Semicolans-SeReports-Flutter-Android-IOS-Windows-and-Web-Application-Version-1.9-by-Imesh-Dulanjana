@@ -184,9 +184,9 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 'Welcome to SeReports',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade800,
+                  color: const Color.fromARGB(255, 0, 0, 0),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -194,9 +194,9 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 'Please Login!',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade800,
+                  color: const Color.fromARGB(255, 0, 0, 0),
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -64,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
                         child: Image.asset(
-                          'assets/logo/sereport.png',
+                          'assets/logo.png',
                           fit: BoxFit.cover,
                           gaplessPlayback: true,
                         ),
