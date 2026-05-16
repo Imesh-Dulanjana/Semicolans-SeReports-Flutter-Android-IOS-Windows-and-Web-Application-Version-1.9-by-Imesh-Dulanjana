@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
-import 'package:http_interceptor/http/intercepted_http.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:sereports/constants.dart';
 import 'package:sereports/repository/auth_repo.dart';
@@ -126,6 +126,8 @@ class Api {
           final body = jsonDecode(response.body);
           token = body['token'] ?? '';
         }
+        // ✅ THIS PRINTS THE TOKEN IN THE DEBUG CONSOLE
+        print('🔐 TOKEN: $token');
         await authRepo.saveToken(token);
         return LoginResult.ok(token);
       }
