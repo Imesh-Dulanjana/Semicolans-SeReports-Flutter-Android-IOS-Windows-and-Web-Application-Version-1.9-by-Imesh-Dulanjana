@@ -19,31 +19,25 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    // Endpoint: /api/suppliers/get-all-suppliers-name-list
+    // /api/suppliers/get-all-suppliers-name-list
     @GetMapping("/get-all-suppliers-name-list")
-    public ResponseEntity<List<String>> getAllSupplierNames() {
+    public ResponseEntity<Map<String, Object>> getAllSupplierNames() {
         List<String> names = supplierService.getAllSupplierNames();
-        return ResponseEntity.ok(names);
+        return ResponseEntity.ok(Map.of("data", names));   // ← wrapped in "data"
     }
 
-    // Endpoint: /api/suppliers/supplier-details
+    // /api/suppliers/supplier-details
     @GetMapping("/supplier-details")
     public ResponseEntity<Map<String, Object>> getSupplierDetails(
             @RequestParam(required = false) String searchText) {
         List<Supplier> all = supplierService.getAllSuppliers();
-        return ResponseEntity.ok(Map.of("data", all));
+        return ResponseEntity.ok(Map.of("data", all));     // ← wrapped in "data"
     }
 
-    // Endpoint: /api/suppliers/payable-details (return empty for now)
+    // /api/suppliers/payable-details
     @GetMapping("/payable-details")
     public ResponseEntity<Map<String, Object>> getSupplierPayableList() {
-        return ResponseEntity.ok(Map.of("data", Collections.emptyList()));
-    }
-
-    // Endpoint: /api/suppliers-creditor/get-creditor-details-list
-    // (Note: the Flutter app expects /api/suppliers-creditor/..., so we add a separate mapping)
-    @GetMapping("/../suppliers-creditor/get-creditor-details-list")
-    public ResponseEntity<Map<String, Object>> getCreditorDetailsList() {
+        // Return empty list (not map) so the app can cast it as List
         return ResponseEntity.ok(Map.of("data", Collections.emptyList()));
     }
 }

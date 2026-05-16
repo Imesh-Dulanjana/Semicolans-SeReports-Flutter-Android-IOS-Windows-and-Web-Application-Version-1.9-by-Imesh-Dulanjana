@@ -14,6 +14,7 @@ public class SupplierCreditorController {
 
     @GetMapping("/get-creditor-details-list")
     public ResponseEntity<Map<String, Object>> getCreditorDetailsList() {
+        // Return empty list wrapped in "data"
         return ResponseEntity.ok(Map.of("data", Collections.emptyList()));
     }
 }
