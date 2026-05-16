@@ -126,8 +126,6 @@ class Api {
           final body = jsonDecode(response.body);
           token = body['token'] ?? '';
         }
-        // ✅ THIS PRINTS THE TOKEN IN THE DEBUG CONSOLE
-        print('🔐 TOKEN: $token');
         await authRepo.saveToken(token);
         return LoginResult.ok(token);
       }
