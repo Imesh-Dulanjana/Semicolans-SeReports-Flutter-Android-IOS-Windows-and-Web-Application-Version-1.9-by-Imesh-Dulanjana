@@ -1,6 +1,7 @@
 package com.ms.semicolans.sereportapi.sereportapi.service.impl;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 import javax.crypto.SecretKey;
@@ -43,10 +44,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Object getUserAccountWithPermissions(String username) throws SQLException {
         List<UserAccounts> users = userAccountsRepo.findByUserName(username);
-        if (!userAccount.isPresent()) {
+        if (users.isEmpty()) {
             throw new SQLException("User not found: " + username);
         }
-        return userAccount.get();
+        return users.get(0);
     }
 }
-
