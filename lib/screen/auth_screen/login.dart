@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sereports/constants.dart';
 import 'package:sereports/repository/auth_repo.dart';
 import 'package:sereports/screen/dashboard/dashbaord.dart';
@@ -91,6 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
     required IconData icon,
     bool obscure = false,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
     String? errorText,
     Widget? suffixIcon,
   }) {
@@ -119,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
             controller: controller,
             obscureText: obscure,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             style: const TextStyle(fontSize: 14, color: Colors.black87),
             decoration: InputDecoration(
               hintText: hint,
@@ -168,13 +171,37 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/logo.png', height: 80),
+              // ---------- LOGO (with fallback) ----------
+              Image.asset(
+                'assets/logo.png',
+                height: 80,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.store, size: 80, color: Colors.blue.shade700);
+                },
+              ),
               const SizedBox(height: 20),
+              // ---------- HEADINGS ----------
               Text(
-                'SeReports',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blue.shade800),
+                'Welcome to SeReports',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade800,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Please Login!',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade800,
+                ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
+              // ---------- USERNAME ----------
               _buildTextField(
                 controller: _emailController,
                 hint: 'Username',
@@ -182,6 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 errorText: _emailError,
               ),
               const SizedBox(height: 16),
+              // ---------- PASSWORD ----------
               _buildTextField(
                 controller: _passwordController,
                 hint: 'Password',
@@ -194,12 +222,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+              // ---------- PIN NUMBER (alphanumeric) ----------
               _buildTextField(
                 controller: _pinnumberController,
                 hint: 'Pin Number',
                 icon: Icons.pin,
                 obscure: !_showPinnumber,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.visiblePassword,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                ],
                 errorText: _pinnumberError,
                 suffixIcon: _buildEyeToggle(
                   show: _showPinnumber,
@@ -207,6 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+              // ---------- LOGIN BUTTON ----------
               SizedBox(
                 width: double.infinity,
                 height: 48,
