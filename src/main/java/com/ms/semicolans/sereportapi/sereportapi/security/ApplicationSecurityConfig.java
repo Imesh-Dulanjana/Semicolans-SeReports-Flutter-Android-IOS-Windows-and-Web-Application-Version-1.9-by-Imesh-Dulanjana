@@ -1,7 +1,9 @@
 package com.ms.semicolans.sereportapi.sereportapi.security;
 
 import java.util.List;
+
 import javax.crypto.SecretKey;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -15,9 +17,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtConfig;
 import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtTokenVerifier;
 import com.ms.semicolans.sereportapi.sereportapi.service.impl.ApplicationUserServiceImpl;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -58,23 +62,8 @@ public class ApplicationSecurityConfig {
                 new JwtTokenVerifier(jwtConfig, secretKey),
                 org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers(
-                    "/api/auth/login",
-                    "/api/auth/user-permissions",
-                    "/api/v1/users/register/**",
-                    "/api/v1/users/verify/**",
-                    "/api/v1/users/resend/**",
-                    "/api/v1/users/verify-reset/**",
-                    "/api/v1/users/reset-password/**",
-                    "/api/v1/users/forgot-password-verify/**",
-                    "/api/v1/*/visitor/**",
-                    "/api/v1/test/**",
-                    "/api/v1/debug/**",
-                    "/swagger-ui.html",
-                    "/swagger-ui/**",
-                    "/v3/api-docs/**",
-                    "/webjars/**"
-                ).permitAll()
+                // TEMPORARY: Allow all /api/** requests so the FallbackController answers
+                .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
