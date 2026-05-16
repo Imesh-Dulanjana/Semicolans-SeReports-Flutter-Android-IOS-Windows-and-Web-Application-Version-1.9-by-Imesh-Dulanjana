@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class SupplierController {
@@ -21,7 +21,7 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    // ---------- Supplier names list (unchanged) ----------
+    // ---------- Supplier names list ----------
     @GetMapping("/api/suppliers/get-all-suppliers-name-list")
     public ResponseEntity<Map<String, Object>> getAllSupplierNames() {
         log.info("SupplierController: get-all-suppliers-name-list");
@@ -29,7 +29,7 @@ public class SupplierController {
         return ResponseEntity.ok(Map.of("data", names));
     }
 
-    // ---------- Supplier details (paginated) ----------
+    // ---------- Supplier details – returns plain list ----------
     @GetMapping("/api/suppliers/supplier-details")
     public ResponseEntity<Map<String, Object>> getSupplierDetails(
             @RequestParam(defaultValue = "0") int page,
@@ -39,22 +39,12 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String invGap,
             @RequestParam(defaultValue = "All") String settlementGap) {
 
-        log.info("SupplierController: supplier-details page={} size={}", page, size);
-
+        log.info("SupplierController: supplier-details");
         List<Supplier> all = supplierService.getAllSuppliers();
-
-        // Simple fake pagination: return all as content (ignore page/size for now)
-        Map<String, Object> pageData = new LinkedHashMap<>();
-        pageData.put("content", all);
-        pageData.put("totalElements", all.size());
-        pageData.put("totalPages", 1);
-        pageData.put("number", page);
-        pageData.put("size", size);
-
-        return ResponseEntity.ok(Map.of("data", pageData));
+        return ResponseEntity.ok(Map.of("data", all));   // plain list, no pagination
     }
 
-    // ---------- Creditor details (paginated, empty for now) ----------
+    // ---------- Creditor details – plain empty list ----------
     @GetMapping("/api/suppliers-creditor/get-creditor-details-list")
     public ResponseEntity<Map<String, Object>> getCreditorDetailsList(
             @RequestParam(defaultValue = "0") int page,
@@ -64,19 +54,11 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String invGap,
             @RequestParam(defaultValue = "All") String settlementGap) {
 
-        log.info("SupplierController: creditor-details page={} size={}", page, size);
-
-        Map<String, Object> pageData = new LinkedHashMap<>();
-        pageData.put("content", Collections.emptyList());
-        pageData.put("totalElements", 0);
-        pageData.put("totalPages", 0);
-        pageData.put("number", page);
-        pageData.put("size", size);
-
-        return ResponseEntity.ok(Map.of("data", pageData));
+        log.info("SupplierController: creditor-details");
+        return ResponseEntity.ok(Map.of("data", Collections.emptyList()));
     }
 
-    // ---------- Payable details (paginated, empty) ----------
+    // ---------- Payable details – plain empty list ----------
     @GetMapping("/api/suppliers/payable-details")
     public ResponseEntity<Map<String, Object>> getPayableDetails(
             @RequestParam(defaultValue = "0") int page,
@@ -88,17 +70,7 @@ public class SupplierController {
             @RequestParam(required = false) String dateFrom,
             @RequestParam(required = false) String dateTo) {
 
-        log.info("SupplierController: payable-details page={} size={}", page, size);
-
-        // Dummy payable response with totalOutstandingAmount = 0
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("content", Collections.emptyList());
-        data.put("totalElements", 0);
-        data.put("totalPages", 0);
-        data.put("totalOutstandingAmount", BigDecimal.ZERO);
-        data.put("page", page);
-        data.put("size", size);
-
-        return ResponseEntity.ok(Map.of("data", data));
+        log.info("SupplierController: payable-details");
+        return ResponseEntity.ok(Map.of("data", Collections.emptyList()));
     }
 }
