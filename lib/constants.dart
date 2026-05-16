@@ -9,14 +9,13 @@ const ip = "69.62.83.161";
 
 // --- Railway (Testing Server) ---
 // Used for development/testing. Hosted on Railway, no cost for low-traffic testing.
-const String loginUrl = "https://semicolans-sereports-flutter-android-ios-windows-production.up.railway.app/login";
-const String baseUrl  = "https://semicolans-sereports-flutter-android-ios-windows-production.up.railway.app/api/v1/";
+// DO NOT include /login here – the api.dart will append auth/login automatically.
+const String baseUrl  = "https://semicolans-sereports-flutter-android-ios-windows-production.up.railway.app/api/";
 
 // --- Live Server (Production) ---
 // Uncomment the lines below and comment out the Railway section above
 // when switching to the live production server.
-// const String loginUrl = "https://sereportapi.semicolans.cloud/login";
-// const String baseUrl  = "https://sereportapi.semicolans.cloud/api/v1/";
+// const String baseUrl  = "https://sereportapi.semicolans.cloud/api/";
 
 // =============================================================================
 // APP COLORS
