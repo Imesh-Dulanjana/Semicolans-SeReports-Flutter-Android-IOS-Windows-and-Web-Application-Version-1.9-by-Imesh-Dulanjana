@@ -6,11 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * Catches any /api/** request that isn't handled by a specific controller.
- * Returns a 200 with empty data so the Flutter app doesn't get a 403.
- * Replace with real controllers when you're ready.
- */
 @RestController
 public class FallbackController {
 
