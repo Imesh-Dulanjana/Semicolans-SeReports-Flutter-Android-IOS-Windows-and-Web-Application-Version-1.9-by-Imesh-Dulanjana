@@ -16,4 +16,10 @@ class SeReportInterceptor implements InterceptorContract {
   Future<BaseResponse> interceptResponse({required BaseResponse response}) async {
     return response;
   }
+
+  @override
+  FutureOr<bool> shouldInterceptRequest() => true;
+
+  @override
+  FutureOr<bool> shouldInterceptResponse() => true;
 }

@@ -25,11 +25,9 @@ class LoginResult {
 }
 
 class Api {
-  // Auth endpoints
   static String loginUrl = "${baseUrl}auth/login";
   static String userPermissions = "${baseUrl}auth/user-permissions";
 
-  // Other endpoints your repos reference – adjust paths as needed
   static String companyName = "${baseUrl}user/get-user-details";
   static String getSupplierNameList = "${baseUrl}suppliers/get-all-suppliers-name-list";
   static String getSupplierDetails = "${baseUrl}suppliers/supplier-details";
@@ -57,17 +55,19 @@ class Api {
   static String lastInvPriceByCustomer = "${baseUrl}invoice/last-inv-price-by-customer";
   static String lastInvPriceByItem = "${baseUrl}invoice/last-inv-price-by-item";
 
-  // Query parameter keys (used by repos)
   static String searchText = "searchText";
   static String categoryId = "categoryId";
 
+  // CHANGED: parameter type from Map<String, String> to Map<String, dynamic>
   static Future<Map<String, dynamic>> get({
     required final String url,
-    required final Map<String, String> parameter,
+    required final Map<String, dynamic> parameter,
   }) async {
     try {
       final interceptedHttp = InterceptedHttp.build(interceptors: [SeReportInterceptor()]);
-      final response = await interceptedHttp.get(url.toUri(), params: parameter);
+      // Convert dynamic values to String for the HTTP client
+      final stringParams = parameter.map((k, v) => MapEntry(k, v.toString()));
+      final response = await interceptedHttp.get(url.toUri(), params: stringParams);
       if (response.statusCode == 200) {
         return Map<String, dynamic>.from(jsonDecode(response.body));
       } else {
