@@ -1,9 +1,7 @@
 package com.ms.semicolans.sereportapi.sereportapi.security;
 
 import java.util.List;
-
 import javax.crypto.SecretKey;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,13 +15,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import com.ms.semicolans.sereportapi.sereportapi.exception.CustomAuthenticationFailureHandler;
 import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtConfig;
 import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtTokenVerifier;
-import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import com.ms.semicolans.sereportapi.sereportapi.service.impl.ApplicationUserServiceImpl;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -36,21 +30,18 @@ public class ApplicationSecurityConfig {
     private final JwtConfig jwtConfig;
     private final SecretKey secretKey;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
     public ApplicationSecurityConfig(
             PasswordEncoder passwordEncoder,
             ApplicationUserServiceImpl applicationUserService,
             JwtConfig jwtConfig,
             SecretKey secretKey,
-            AuthenticationConfiguration authenticationConfiguration,
-            CustomAuthenticationFailureHandler customAuthenticationFailureHandler) {
+            AuthenticationConfiguration authenticationConfiguration) {
         this.passwordEncoder = passwordEncoder;
         this.applicationUserService = applicationUserService;
         this.jwtConfig = jwtConfig;
         this.secretKey = secretKey;
         this.authenticationConfiguration = authenticationConfiguration;
-        this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
         log.info("ApplicationSecurityConfig initialized");
     }
 
@@ -58,47 +49,35 @@ public class ApplicationSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         log.info("Configuring security filter chain");
 
-        // Create the JWT filter with failure handler
-        JwtUsernameAndPasswordAuthenticationFilter jwtFilter =
-                new JwtUsernameAndPasswordAuthenticationFilter(
-                        authenticationConfiguration.getAuthenticationManager(),
-                        jwtConfig,
-                        secretKey,
-                        applicationUserService);
-        
-        // CRITICAL: Set the failure handler on the JWT filter
-        jwtFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
-        log.info("✓ CustomAuthenticationFailureHandler set on JWT filter");
-
         http
             .csrf(csrf -> csrf.disable())
-            .cors(httpSecurityCorsConfigurer -> 
-                httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> 
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilter(jwtFilter)
-            .addFilterAfter(new JwtTokenVerifier(jwtConfig, secretKey),
-                    JwtUsernameAndPasswordAuthenticationFilter.class)
+            .addFilterAfter(
+                new JwtTokenVerifier(jwtConfig, secretKey),
+                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
-                    .requestMatchers(
-                            "/api/v1/users/register/**",
-                            "/api/v1/users/verify/**",
-                            "/api/v1/users/resend/**",
-                            "/api/v1/users/verify-reset/**",
-                            "/api/v1/users/reset-password/**",
-                            "/api/v1/users/forgot-password-verify/**",
-                            "/api/v1/*/visitor/**",
-                            "/api/v1/test/**",
-                            "/api/v1/debug/**",
-                            "/swagger-ui.html",
-                            "/swagger-ui/**",
-                            "/v3/api-docs/**",
-                            "/webjars/**")
-                    .permitAll()
-                    .anyRequest().authenticated());
+                .requestMatchers(
+                    "/api/auth/login",
+                    "/api/auth/user-permissions",
+                    "/api/v1/users/register/**",
+                    "/api/v1/users/verify/**",
+                    "/api/v1/users/resend/**",
+                    "/api/v1/users/verify-reset/**",
+                    "/api/v1/users/reset-password/**",
+                    "/api/v1/users/forgot-password-verify/**",
+                    "/api/v1/*/visitor/**",
+                    "/api/v1/test/**",
+                    "/api/v1/debug/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/webjars/**"
+                ).permitAll()
+                .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
-
         return http.build();
     }
 

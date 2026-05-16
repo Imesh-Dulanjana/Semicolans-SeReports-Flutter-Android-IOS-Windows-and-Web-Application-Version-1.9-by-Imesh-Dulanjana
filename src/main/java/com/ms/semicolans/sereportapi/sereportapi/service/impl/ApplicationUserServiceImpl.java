@@ -1,6 +1,5 @@
 package com.ms.semicolans.sereportapi.sereportapi.service.impl;
 
-import com.ms.semicolans.sereportapi.sereportapi.auth.ApplicationUser;
 import com.ms.semicolans.sereportapi.sereportapi.entity.main.CompanyDetails;
 import com.ms.semicolans.sereportapi.sereportapi.entity.main.UserAccounts;
 import com.ms.semicolans.sereportapi.sereportapi.repo.CompanyDetailsRepo;
@@ -8,6 +7,7 @@ import com.ms.semicolans.sereportapi.sereportapi.repo.UserAccountsRepo;
 import com.ms.semicolans.sereportapi.sereportapi.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,7 +34,7 @@ public class ApplicationUserServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<CompanyDetails> systemUser = companyDetailsRepo.findByUsername(username);
         if (systemUser.isPresent()) {
-            return buildApplicationUserForSystemUser(systemUser.get());
+            return buildUserDetails(systemUser.get());
         } else {
             throw new UsernameNotFoundException(String.format("username %s not found", username));
         }
@@ -82,19 +82,21 @@ public class ApplicationUserServiceImpl implements UserDetailsService {
         return jwtUtil.extractUsername(token);
     }
 
-    // ---------- Helper (kept for the UserDetailsService part) ----------
-    private ApplicationUser buildApplicationUserForSystemUser(CompanyDetails systemUser) {
+    // ---------- Helper using Spring's built-in User class ----------
+    private UserDetails buildUserDetails(CompanyDetails systemUser) {
         Set<SimpleGrantedAuthority> grantedAuthorities = new HashSet<>();
         if (systemUser.getUserType().trim().equalsIgnoreCase("Admin")) {
             grantedAuthorities.addAll(ADMIN.getGrantedAuthorities());
         }
         boolean isActive = systemUser.getStatus().trim().equalsIgnoreCase("Active");
-        return new ApplicationUser(
-                systemUser.getPassword().trim(),
-                systemUser.getUsername(),
-                grantedAuthorities,
-                true, true, true, isActive,
-                systemUser.getCompanyId()
-        );
+        return User.builder()
+                .username(systemUser.getUsername())
+                .password(systemUser.getPassword())
+                .authorities(grantedAuthorities)
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(!isActive)
+                .build();
     }
 }
