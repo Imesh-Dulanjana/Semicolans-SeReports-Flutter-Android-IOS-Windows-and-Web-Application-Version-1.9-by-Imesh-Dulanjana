@@ -9,8 +9,6 @@ import java.util.Optional;
 public interface CompanyDetailsRepo extends JpaRepository<CompanyDetails, String> {
 
     Optional<CompanyDetails> findByUsername(String username);
-
     Optional<CompanyDetails> findByUsernameAndPinnumber(String username, String pinnumber);
-
     Optional<CompanyDetails> findByPinnumber(String pinnumber);
 }
