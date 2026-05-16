@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class SupplierController {
@@ -29,7 +29,7 @@ public class SupplierController {
         return ResponseEntity.ok(Map.of("data", names));
     }
 
-    // ---------- Supplier details – returns plain list ----------
+    // ---------- Supplier details ----------
     @GetMapping("/api/suppliers/supplier-details")
     public ResponseEntity<Map<String, Object>> getSupplierDetails(
             @RequestParam(defaultValue = "0") int page,
@@ -41,10 +41,18 @@ public class SupplierController {
 
         log.info("SupplierController: supplier-details");
         List<Supplier> all = supplierService.getAllSuppliers();
-        return ResponseEntity.ok(Map.of("data", all));   // plain list, no pagination
+
+        // The repo extracts response['data'] and the BLoC expects a Map with
+        // keys: "data" (list), "count", "totalOutstandingAmount"
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("data", all);
+        map.put("count", all.size());
+        map.put("totalOutstandingAmount", BigDecimal.ZERO);
+
+        return ResponseEntity.ok(Map.of("data", map));
     }
 
-    // ---------- Creditor details – plain empty list ----------
+    // ---------- Creditor details ----------
     @GetMapping("/api/suppliers-creditor/get-creditor-details-list")
     public ResponseEntity<Map<String, Object>> getCreditorDetailsList(
             @RequestParam(defaultValue = "0") int page,
@@ -55,10 +63,17 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String settlementGap) {
 
         log.info("SupplierController: creditor-details");
-        return ResponseEntity.ok(Map.of("data", Collections.emptyList()));
+
+        // Creditor BLoC expects: response['data'] -> Map with "data", "count", "totalOutstandingAmount"
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("data", Collections.emptyList());
+        map.put("count", 0);
+        map.put("totalOutstandingAmount", BigDecimal.ZERO);
+
+        return ResponseEntity.ok(Map.of("data", map));
     }
 
-    // ---------- Payable details – plain empty list ----------
+    // ---------- Payable details (nested structure) ----------
     @GetMapping("/api/suppliers/payable-details")
     public ResponseEntity<Map<String, Object>> getPayableDetails(
             @RequestParam(defaultValue = "0") int page,
@@ -71,6 +86,14 @@ public class SupplierController {
             @RequestParam(required = false) String dateTo) {
 
         log.info("SupplierController: payable-details");
-        return ResponseEntity.ok(Map.of("data", Collections.emptyList()));
+
+        // The payable BLoC expects: response['data'] -> an object with
+        // "data" (list), "count", "totalOutstandingAmount"
+        Map<String, Object> inner = new LinkedHashMap<>();
+        inner.put("data", Collections.emptyList());
+        inner.put("count", 0);
+        inner.put("totalOutstandingAmount", BigDecimal.ZERO);
+
+        return ResponseEntity.ok(Map.of("data", inner));
     }
 }
