@@ -19,7 +19,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtConfig;
-import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtTokenVerifier;
 import com.ms.semicolans.sereportapi.sereportapi.service.impl.ApplicationUserServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,18 +50,17 @@ public class ApplicationSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("Configuring security filter chain");
+        log.info("Configuring security filter chain – JWT filter DISABLED for testing");
 
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterAfter(
-                new JwtTokenVerifier(jwtConfig, secretKey),
-                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+            // .addFilterAfter(   ← JWT filter removed for now
+            //     new JwtTokenVerifier(jwtConfig, secretKey),
+            //     org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
-                // TEMPORARY: Allow all /api/** requests so the FallbackController answers
                 .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated());
 
