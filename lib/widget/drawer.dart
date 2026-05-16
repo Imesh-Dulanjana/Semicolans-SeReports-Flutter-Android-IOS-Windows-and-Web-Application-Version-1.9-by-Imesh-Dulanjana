@@ -14,6 +14,7 @@ import 'package:sereports/screen/product/product_record.dart';
 import 'package:sereports/screen/purchase/purchase.dart';
 import 'package:sereports/screen/sales/sales.dart';
 import 'package:sereports/screen/supplier/supplier.dart';
+import 'package:sereports/utils/permission_guard.dart';   // ✅ added
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -32,77 +33,183 @@ class AppDrawer extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
+                  // ---------- HOME (chkViewHome) ----------
                   ListTile(
                     leading: const Icon(Icons.home),
                     title: const Text('Home'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
+                      bool allowed = PermissionGuard.verifyAccess(
+                        context: context,
+                        permissionKey: 'chkViewHome',
+                        visualOptionName: "Home",
+                      );
+                      if (allowed) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
+                      }
                     },
                   ),
+
+                  // ---------- DASHBOARD (always accessible) ----------
                   ListTile(
                     leading: const Icon(Icons.dashboard),
                     title: const Text('Dashboard'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const DashbaordScreen()));
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const DashbaordScreen()),
+                      );
                     },
                   ),
+
+                  // ---------- INVOICE CREATING (chkInvoice) ----------
                   ListTile(
                     leading: const Icon(Icons.receipt_long),
                     title: const Text('Invoice Creating'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const InvoiceCreationScreen()));
+                      bool allowed = PermissionGuard.verifyAccess(
+                        context: context,
+                        permissionKey: 'chkInvoice',   // or chkMakeQuotation if you prefer
+                        visualOptionName: "Invoice Creating",
+                      );
+                      if (allowed) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const InvoiceCreationScreen()),
+                        );
+                      }
                     },
                   ),
+
+                  // ---------- PRODUCTS (chkAddItem) ----------
                   ListTile(
                     leading: const Icon(Icons.inventory),
                     title: const Text('Products'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ProductRecordsPage()));
+                      bool allowed = PermissionGuard.verifyAccess(
+                        context: context,
+                        permissionKey: 'chkAddItem',   // or chkEditItem / chkDelItem
+                        visualOptionName: "Products",
+                      );
+                      if (allowed) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const ProductRecordsPage()),
+                        );
+                      }
                     },
                   ),
+
+                  // ---------- SUPPLIERS (chkAddSup) ----------
                   ListTile(
                     leading: const Icon(Icons.local_shipping),
                     title: const Text('Suppliers'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SupplierPage()));
+                      bool allowed = PermissionGuard.verifyAccess(
+                        context: context,
+                        permissionKey: 'chkAddSup',
+                        visualOptionName: "Suppliers",
+                      );
+                      if (allowed) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const SupplierPage()),
+                        );
+                      }
                     },
                   ),
+
+                  // ---------- CUSTOMERS (chkAddCus) ----------
                   ListTile(
                     leading: const Icon(Icons.people),
                     title: const Text('Customers'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const CustomerPage()));
+                      bool allowed = PermissionGuard.verifyAccess(
+                        context: context,
+                        permissionKey: 'chkAddCus',
+                        visualOptionName: "Customers",
+                      );
+                      if (allowed) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const CustomerPage()),
+                        );
+                      }
                     },
                   ),
+
+                  // ---------- SALES (chkInvoice or dedicated sales report permission) ----------
                   ListTile(
                     leading: const Icon(Icons.trending_up),
                     title: const Text('Sales'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SalesPage()));
+                      // Choose a suitable permission; here we use chkInvoice as a proxy.
+                      bool allowed = PermissionGuard.verifyAccess(
+                        context: context,
+                        permissionKey: 'chkInvoice',   // or maybe chkPrintInvoice?
+                        visualOptionName: "Sales",
+                      );
+                      if (allowed) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const SalesPage()),
+                        );
+                      }
                     },
                   ),
+
+                  // ---------- PURCHASE (chkPurchase) ----------
                   ListTile(
                     leading: const Icon(Icons.shopping_cart),
                     title: const Text('Purchase'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const PurchasePage()));
+                      bool allowed = PermissionGuard.verifyAccess(
+                        context: context,
+                        permissionKey: 'chkPurchase',
+                        visualOptionName: "Purchase",
+                      );
+                      if (allowed) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const PurchasePage()),
+                        );
+                      }
                     },
                   ),
+
+                  // ---------- INCOME / EXPENSES (chkAddIncome) ----------
                   ListTile(
                     leading: const Icon(Icons.attach_money),
                     title: const Text('Income/Expenses'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const IncomeAndExpences()));
+                      bool allowed = PermissionGuard.verifyAccess(
+                        context: context,
+                        permissionKey: 'chkAddIncome',   // or chkAddExpenses
+                        visualOptionName: "Income/Expenses",
+                      );
+                      if (allowed) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const IncomeAndExpences()),
+                        );
+                      }
                     },
                   ),
+
+                  // ---------- BANKING (chkAddBank) ----------
                   ListTile(
                     leading: const Icon(Icons.account_balance),
                     title: const Text('Banking'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const BankPage()));
+                      bool allowed = PermissionGuard.verifyAccess(
+                        context: context,
+                        permissionKey: 'chkAddBank',
+                        visualOptionName: "Banking",
+                      );
+                      if (allowed) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const BankPage()),
+                        );
+                      }
                     },
                   ),
+
                   const Divider(),
+
+                  // ---------- LOGOUT ----------
                   ListTile(
                     leading: const Icon(Icons.logout, color: Colors.red),
                     title: const Text('Logout', style: TextStyle(color: Colors.red)),
