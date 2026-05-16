@@ -16,8 +16,6 @@ import 'package:sereports/screen/sales/sales.dart';
 import 'package:sereports/screen/supplier/supplier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// App-wide side drawer.
-/// Previously hidden navigation items have been fully restored.
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -34,121 +32,90 @@ class AppDrawer extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  // Home
                   ListTile(
                     leading: const Icon(Icons.home),
                     title: const Text('Home'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => HomeScreen()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
                     },
                   ),
-
-                  // Dashboard
                   ListTile(
                     leading: const Icon(Icons.dashboard),
                     title: const Text('Dashboard'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const DashbaordScreen()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const DashbaordScreen()));
                     },
                   ),
-
-                  // Invoice Creating
                   ListTile(
                     leading: const Icon(Icons.receipt_long),
                     title: const Text('Invoice Creating'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) =>
-                              const InvoiceCreationScreen()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const InvoiceCreationScreen()));
                     },
                   ),
-
-                  // Products
                   ListTile(
                     leading: const Icon(Icons.inventory),
                     title: const Text('Products'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const ProductRecordsPage()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ProductRecordsPage()));
                     },
                   ),
-
-                  // Suppliers
                   ListTile(
                     leading: const Icon(Icons.local_shipping),
                     title: const Text('Suppliers'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const SupplierPage()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SupplierPage()));
                     },
                   ),
-
-                  // Customers
                   ListTile(
                     leading: const Icon(Icons.people),
                     title: const Text('Customers'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const CustomerPage()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const CustomerPage()));
                     },
                   ),
-
-                  // Sales
                   ListTile(
                     leading: const Icon(Icons.trending_up),
                     title: const Text('Sales'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const SalesPage()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SalesPage()));
                     },
                   ),
-
-                  // Purchase
                   ListTile(
                     leading: const Icon(Icons.shopping_cart),
                     title: const Text('Purchase'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const PurchasePage()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const PurchasePage()));
                     },
                   ),
-
-                  // Income / Expenses
                   ListTile(
                     leading: const Icon(Icons.attach_money),
                     title: const Text('Income/Expenses'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const IncomeAndExpences()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const IncomeAndExpences()));
                     },
                   ),
-
-                  // Banking
                   ListTile(
                     leading: const Icon(Icons.account_balance),
                     title: const Text('Banking'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const BankPage()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const BankPage()));
                     },
                   ),
-
                   const Divider(),
-
-                  // Logout — clears token and returns to Login screen
                   ListTile(
                     leading: const Icon(Icons.logout, color: Colors.red),
-                    title: const Text('Logout',
-                        style: TextStyle(color: Colors.red)),
+                    title: const Text('Logout', style: TextStyle(color: Colors.red)),
                     onTap: () async {
-                      SharedPreferences preferences =
-                          await SharedPreferences.getInstance();
+                      SharedPreferences preferences = await SharedPreferences.getInstance();
                       AuthRepo authRepo = AuthRepo(preferences);
-                      await authRepo.logout();
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const LoginScreen()));
+                      await authRepo.logout(context);
+                      if (context.mounted) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                          (route) => false,
+                        );
+                      }
                     },
                   ),
                 ],

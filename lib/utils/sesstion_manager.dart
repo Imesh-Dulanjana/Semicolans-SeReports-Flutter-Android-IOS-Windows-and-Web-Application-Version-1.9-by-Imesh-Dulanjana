@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:sereports/repository/auth_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,14 +13,12 @@ class SessionManager {
   SessionManager(this._preferences, this.context);
 
   void startSessionMonitoring() {
-    // Check token validity every minute
     _sessionCheckTimer = Timer.periodic(Duration(minutes: 1), (_) async {
       final authRepo = AuthRepo(_preferences);
       final isValid = await authRepo.isLoggedIn();
 
       if (!isValid && mounted) {
-        // Token has expired, redirect to login
-        authRepo.redirectToLogin(context);
+        authRepo.logout(context);
         stopSessionMonitoring();
       }
     });

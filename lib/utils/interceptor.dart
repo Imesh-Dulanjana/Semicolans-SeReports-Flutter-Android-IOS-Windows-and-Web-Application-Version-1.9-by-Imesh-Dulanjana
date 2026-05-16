@@ -3,17 +3,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SeReportInterceptor implements InterceptorContract {
   @override
-  Future<RequestData> interceptRequest({required RequestData data}) async {
+  Future<BaseRequest> interceptRequest({required BaseRequest request}) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token') ?? '';
     if (token.isNotEmpty) {
-      data.headers['Authorization'] = 'Bearer $token';
+      request.headers['Authorization'] = 'Bearer $token';
     }
-    return data;
+    return request;
   }
 
   @override
-  Future<ResponseData> interceptResponse({required ResponseData data}) async {
-    return data;
+  Future<BaseResponse> interceptResponse({required BaseResponse response}) async {
+    return response;
   }
 }

@@ -25,8 +25,41 @@ class LoginResult {
 }
 
 class Api {
+  // Auth endpoints
   static String loginUrl = "${baseUrl}auth/login";
   static String userPermissions = "${baseUrl}auth/user-permissions";
+
+  // Other endpoints your repos reference – adjust paths as needed
+  static String companyName = "${baseUrl}user/get-user-details";
+  static String getSupplierNameList = "${baseUrl}suppliers/get-all-suppliers-name-list";
+  static String getSupplierDetails = "${baseUrl}suppliers/supplier-details";
+  static String getCreditorDetailsList = "${baseUrl}suppliers-creditor/get-creditor-details-list";
+  static String getSupplierPayableList = "${baseUrl}suppliers/payable-details";
+  static String getCustomerDetails = "${baseUrl}customers/get-customers-details";
+  static String getCustomerDebitors = "${baseUrl}customers/get-debtor-details";
+  static String getCustomerRecivables = "${baseUrl}receivables/receivable-details";
+  static String getBankNameList = "${baseUrl}bank-details/get-all-bank-names";
+  static String getBankDetails = "${baseUrl}bank-details/get-all-bank-details";
+  static String getBankTransactions = "${baseUrl}banking/bank-transaction-details";
+  static String getSalesSummary = "${baseUrl}sales-summary/summary-details";
+  static String getSalesDetails = "${baseUrl}sales/sales-details";
+  static String getPurchaseSummary = "${baseUrl}purchase-summary/summary-details";
+  static String getPurchaseDetails = "${baseUrl}purchases/purchase-details";
+  static String getIncomeExpensesDetails = "${baseUrl}income-expenses/details";
+  static String dashboardSummary = "${baseUrl}dashboards/summary";
+  static String getCategoryNameList = "${baseUrl}categories/get-all-category-name-list";
+  static String getSubCategoryNameList = "${baseUrl}sub-categories/get-all-sub-category-name-list";
+  static String getProductAll = "${baseUrl}products/get-all-product";
+  static String lookupItemByBarcode = "${baseUrl}invoice/item-lookup";
+  static String createInvoice = "${baseUrl}invoice/create";
+  static String calculatePrice = "${baseUrl}invoice/calculate-price";
+  static String checkPriceLink = "${baseUrl}invoice/check-price-link";
+  static String lastInvPriceByCustomer = "${baseUrl}invoice/last-inv-price-by-customer";
+  static String lastInvPriceByItem = "${baseUrl}invoice/last-inv-price-by-item";
+
+  // Query parameter keys (used by repos)
+  static String searchText = "searchText";
+  static String categoryId = "categoryId";
 
   static Future<Map<String, dynamic>> get({
     required final String url,
@@ -83,9 +116,6 @@ class Api {
           "pinnumber": pinnumber.trim(),
         }),
       );
-
-      print('Login response status: ${response.statusCode}');
-      print('Login response body: ${response.body}');
 
       if (response.statusCode == 200) {
         String token = '';
