@@ -23,34 +23,19 @@ public class SupplierController {
 
     @PostConstruct
     public void init() {
-        log.error("🚀🚀🚀 SupplierController BEAN CREATED 🚀🚀🚀");
+        log.error("🚀🚀🚀 SUPPLIER CONTROLLER CREATED 🚀🚀🚀");
     }
 
-    // ---- PUBLIC TEST (no /api/) ----
-    @GetMapping("/public-supplier-details")
-    public ResponseEntity<Map<String, Object>> publicTest() {
-        log.error("### publicTest() called ###");
-        List<Supplier> all = supplierService.getAllSuppliers();
-        Map<String, Object> inner = new LinkedHashMap<>();
-        inner.put("data", all);
-        inner.put("count", all.size());
-        inner.put("totalOutstandingAmount", BigDecimal.ZERO);
-        return ResponseEntity.ok(Map.of("data", inner));
-    }
-
-    // ---- /api/ endpoints ----
+    // ---------- Unique ping ----------
     @GetMapping("/api/suppliers/ping")
-    public ResponseEntity<String> ping() {
-        log.error("### SupplierController.ping() called ###");
-        return ResponseEntity.ok("SupplierController is alive");
+    public ResponseEntity<Map<String, String>> ping() {
+        return ResponseEntity.ok(Map.of(
+            "controller", "SupplierController",
+            "status", "alive"
+        ));
     }
 
-    @GetMapping("/api/suppliers/get-all-suppliers-name-list")
-    public ResponseEntity<Map<String, Object>> getAllSupplierNames() {
-        List<String> names = supplierService.getAllSupplierNames();
-        return ResponseEntity.ok(Map.of("data", names));
-    }
-
+    // ---------- Supplier details with unique marker ----------
     @GetMapping("/api/suppliers/supplier-details")
     public ResponseEntity<Map<String, Object>> getSupplierDetails(
             @RequestParam(defaultValue = "0") int page,
@@ -60,13 +45,28 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String invGap,
             @RequestParam(defaultValue = "All") String settlementGap) {
 
-        log.error("### getSupplierDetails() called ###");
+        log.error("### REAL SupplierController.getSupplierDetails() ###");
         List<Supplier> all = supplierService.getAllSuppliers();
+
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", all);
         inner.put("count", all.size());
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
-        return ResponseEntity.ok(Map.of("data", inner));
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("controller", "SupplierController");   // UNIQUE MARKER
+        response.put("data", inner);
+        return ResponseEntity.ok(response);
+    }
+
+    // ---------- Other endpoints with marker ----------
+    @GetMapping("/api/suppliers/get-all-suppliers-name-list")
+    public ResponseEntity<Map<String, Object>> getAllSupplierNames() {
+        List<String> names = supplierService.getAllSupplierNames();
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("controller", "SupplierController");
+        response.put("data", names);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/api/suppliers-creditor/get-creditor-details-list")
@@ -78,12 +78,15 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String invGap,
             @RequestParam(defaultValue = "All") String settlementGap) {
 
-        log.error("### getCreditorDetailsList() called ###");
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", Collections.emptyList());
         inner.put("count", 0);
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
-        return ResponseEntity.ok(Map.of("data", inner));
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("controller", "SupplierController");
+        response.put("data", inner);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/api/suppliers/payable-details")
@@ -97,11 +100,14 @@ public class SupplierController {
             @RequestParam(required = false) String dateFrom,
             @RequestParam(required = false) String dateTo) {
 
-        log.error("### getPayableDetails() called ###");
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", Collections.emptyList());
         inner.put("count", 0);
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
-        return ResponseEntity.ok(Map.of("data", inner));
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("controller", "SupplierController");
+        response.put("data", inner);
+        return ResponseEntity.ok(response);
     }
 }
