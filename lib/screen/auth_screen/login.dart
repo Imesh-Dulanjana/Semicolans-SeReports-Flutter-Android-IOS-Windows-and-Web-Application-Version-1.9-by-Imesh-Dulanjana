@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 5),
           Text(
             helperText,
-            style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+            style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontStyle: FontStyle.normal),
           ),
         ],
       ],
@@ -241,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
                 ],
                 errorText: _pinnumberError,
-                helperText: 'Please enter the pin number provided by your administrator.',
+                helperText: 'Enter the pin number provided by your administrator.',
                 suffixIcon: _buildEyeToggle(
                   show: _showPinnumber,
                   onPressed: () => setState(() => _showPinnumber = !_showPinnumber),
