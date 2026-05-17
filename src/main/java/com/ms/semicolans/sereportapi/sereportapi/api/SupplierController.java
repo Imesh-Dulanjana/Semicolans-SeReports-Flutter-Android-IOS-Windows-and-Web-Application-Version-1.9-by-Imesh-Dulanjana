@@ -20,6 +20,13 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
+    // ---------- Ping (to confirm controller is loaded) ----------
+    @GetMapping("/api/suppliers/ping")
+    public ResponseEntity<String> ping() {
+        log.error("### SupplierController.ping() called ###");
+        return ResponseEntity.ok("SupplierController is alive");
+    }
+
     // ---------- Supplier names list ----------
     @GetMapping("/api/suppliers/get-all-suppliers-name-list")
     public ResponseEntity<Map<String, Object>> getAllSupplierNames() {
@@ -38,7 +45,7 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String invGap,
             @RequestParam(defaultValue = "All") String settlementGap) {
 
-        log.info("SupplierController: supplier-details");
+        log.error("### SupplierController.getSupplierDetails() called ###");
         List<Supplier> all = supplierService.getAllSuppliers();
 
         Map<String, Object> inner = new LinkedHashMap<>();
@@ -59,7 +66,7 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String invGap,
             @RequestParam(defaultValue = "All") String settlementGap) {
 
-        log.info("SupplierController: creditor-details");
+        log.error("### SupplierController.getCreditorDetailsList() called ###");
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", Collections.emptyList());
         inner.put("count", 0);
@@ -80,7 +87,7 @@ public class SupplierController {
             @RequestParam(required = false) String dateFrom,
             @RequestParam(required = false) String dateTo) {
 
-        log.info("SupplierController: payable-details");
+        log.error("### SupplierController.getPayableDetails() called ###");
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", Collections.emptyList());
         inner.put("count", 0);
