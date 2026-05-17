@@ -1,9 +1,7 @@
 package com.ms.semicolans.sereportapi.sereportapi.security;
 
 import java.util.List;
-
 import javax.crypto.SecretKey;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,10 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtConfig;
 import com.ms.semicolans.sereportapi.sereportapi.service.impl.ApplicationUserServiceImpl;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -45,13 +41,10 @@ public class ApplicationSecurityConfig {
         this.jwtConfig = jwtConfig;
         this.secretKey = secretKey;
         this.authenticationConfiguration = authenticationConfiguration;
-        log.info("ApplicationSecurityConfig initialized");
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("Configuring security filter chain – MARKER VERSION 2");
-
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
