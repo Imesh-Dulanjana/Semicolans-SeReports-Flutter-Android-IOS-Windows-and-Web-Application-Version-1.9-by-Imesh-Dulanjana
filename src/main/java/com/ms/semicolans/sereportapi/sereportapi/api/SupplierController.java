@@ -2,6 +2,7 @@ package com.ms.semicolans.sereportapi.sereportapi.api;
 
 import com.ms.semicolans.sereportapi.sereportapi.entity.main.Supplier;
 import com.ms.semicolans.sereportapi.sereportapi.service.SupplierService;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,13 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    // ---------- Ping (to confirm controller is loaded) ----------
+    // 🚀 This runs when Spring creates the bean
+    @PostConstruct
+    public void init() {
+        log.error("🚀🚀🚀 SupplierController has been created by Spring! 🚀🚀🚀");
+    }
+
+    // ---------- Ping ----------
     @GetMapping("/api/suppliers/ping")
     public ResponseEntity<String> ping() {
         log.error("### SupplierController.ping() called ###");
