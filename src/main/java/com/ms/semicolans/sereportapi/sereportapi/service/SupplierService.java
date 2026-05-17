@@ -1,30 +1,19 @@
 package com.ms.semicolans.sereportapi.sereportapi.service;
 
-import com.ms.semicolans.sereportapi.sereportapi.entity.main.Supplier;
-import com.ms.semicolans.sereportapi.sereportapi.repo.SupplierRepo;
-import org.springframework.stereotype.Service;
+import com.ms.semicolans.sereportapi.sereportapi.dto.responsedto.*;
+import com.ms.semicolans.sereportapi.sereportapi.dto.responsedto.paginated.PaginatedResponseCreditorsDetailsDTO;
+import com.ms.semicolans.sereportapi.sereportapi.dto.responsedto.paginated.PaginatedResponsePayableDTO;
+
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Service
-public class SupplierService {
+public interface SupplierService {
+    List<ResponseCommonNameAndCodeDTO> getAllSuppliersNameList(String searchText, String token) throws SQLException;
 
-    private final SupplierRepo supplierRepo;
+    void getSupplierData(String searchText, String token) throws SQLException;
 
-    public SupplierService(SupplierRepo supplierRepo) {
-        this.supplierRepo = supplierRepo;
-    }
+    PaginatedResponseCreditorsDetailsDTO getAllSuppliersList(String supplierSearch, String creditSearch, String invGap, String settlementGap, Integer page, Integer size, String token) throws SQLException;
 
-    public List<String> getAllSupplierNames() {
-        // Return only names for dropdown
-        return supplierRepo.findAll()
-                .stream()
-                .map(Supplier::getSupName)
-                .filter(name -> name != null && !name.isBlank())
-                .collect(Collectors.toList());
-    }
-
-    public List<Supplier> getAllSuppliers() {
-        return supplierRepo.findAll();
-    }
+    PaginatedResponsePayableDTO getPayableDetails(String token, String locaCode, String searchSupplier, String searchInvoice, String invGap, LocalDate dateFrom, LocalDate dateTo, int page, int size) throws SQLException;
 }
