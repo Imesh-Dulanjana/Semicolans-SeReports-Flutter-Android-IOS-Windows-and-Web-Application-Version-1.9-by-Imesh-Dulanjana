@@ -95,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
     List<TextInputFormatter>? inputFormatters,
     String? errorText,
     Widget? suffixIcon,
+    String? helperText,
   }) {
     final bool hasError = errorText != null;
     return Column(
@@ -148,6 +149,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(fontSize: 11.5, color: Colors.red.shade400, fontWeight: FontWeight.w500),
               ),
             ],
+          ),
+        ],
+        if (helperText != null) ...[
+          const SizedBox(height: 5),
+          Text(
+            helperText,
+            style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
           ),
         ],
       ],
@@ -233,6 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
                 ],
                 errorText: _pinnumberError,
+                helperText: 'Please enter the pin number provided by your administrator.',
                 suffixIcon: _buildEyeToggle(
                   show: _showPinnumber,
                   onPressed: () => setState(() => _showPinnumber = !_showPinnumber),
