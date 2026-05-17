@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 public class SupplierController {
@@ -21,10 +20,9 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    // ---------- Supplier names list ----------
+    // ---------- Supplier names list (unchanged) ----------
     @GetMapping("/api/suppliers/get-all-suppliers-name-list")
     public ResponseEntity<Map<String, Object>> getAllSupplierNames() {
-        log.info("SupplierController: get-all-suppliers-name-list");
         List<String> names = supplierService.getAllSupplierNames();
         return ResponseEntity.ok(Map.of("data", names));
     }
@@ -42,14 +40,14 @@ public class SupplierController {
         log.info("SupplierController: supplier-details");
         List<Supplier> all = supplierService.getAllSuppliers();
 
-        // The repo extracts response['data'] and the BLoC expects a Map with
-        // keys: "data" (list), "count", "totalOutstandingAmount"
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("data", all);
-        map.put("count", all.size());
-        map.put("totalOutstandingAmount", BigDecimal.ZERO);
+        // The Flutter supplier_repo does: response['data'] as Map<String,dynamic>
+        // then the BLoC extracts: data['data'] as List, data['count'], data['totalOutstandingAmount']
+        Map<String, Object> inner = new LinkedHashMap<>();
+        inner.put("data", all);                       // the list
+        inner.put("count", all.size());
+        inner.put("totalOutstandingAmount", BigDecimal.ZERO);
 
-        return ResponseEntity.ok(Map.of("data", map));
+        return ResponseEntity.ok(Map.of("data", inner));
     }
 
     // ---------- Creditor details ----------
@@ -64,16 +62,15 @@ public class SupplierController {
 
         log.info("SupplierController: creditor-details");
 
-        // Creditor BLoC expects: response['data'] -> Map with "data", "count", "totalOutstandingAmount"
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("data", Collections.emptyList());
-        map.put("count", 0);
-        map.put("totalOutstandingAmount", BigDecimal.ZERO);
+        Map<String, Object> inner = new LinkedHashMap<>();
+        inner.put("data", Collections.emptyList());   // empty list for now
+        inner.put("count", 0);
+        inner.put("totalOutstandingAmount", BigDecimal.ZERO);
 
-        return ResponseEntity.ok(Map.of("data", map));
+        return ResponseEntity.ok(Map.of("data", inner));
     }
 
-    // ---------- Payable details (nested structure) ----------
+    // ---------- Payable details ----------
     @GetMapping("/api/suppliers/payable-details")
     public ResponseEntity<Map<String, Object>> getPayableDetails(
             @RequestParam(defaultValue = "0") int page,
@@ -87,8 +84,6 @@ public class SupplierController {
 
         log.info("SupplierController: payable-details");
 
-        // The payable BLoC expects: response['data'] -> an object with
-        // "data" (list), "count", "totalOutstandingAmount"
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", Collections.emptyList());
         inner.put("count", 0);
