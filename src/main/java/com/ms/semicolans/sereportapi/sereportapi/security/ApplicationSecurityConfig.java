@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtConfig;
+import com.ms.semicolans.sereportapi.sereportapi.jwt.JwtTokenVerifier;
 import com.ms.semicolans.sereportapi.sereportapi.service.impl.ApplicationUserServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,18 +51,36 @@ public class ApplicationSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("Configuring security filter chain – JWT filter DISABLED for testing");
+        log.info("Configuring security filter chain");
 
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // .addFilterAfter(   ← JWT filter removed for now
-            //     new JwtTokenVerifier(jwtConfig, secretKey),
-            //     org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(
+                new JwtTokenVerifier(jwtConfig, secretKey),
+                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers(
+                    "/api/auth/login",
+                    "/api/auth/user-permissions",
+                    "/api/suppliers/**",
+                    "/api/suppliers-creditor/**",
+                    "/api/v1/users/register/**",
+                    "/api/v1/users/verify/**",
+                    "/api/v1/users/resend/**",
+                    "/api/v1/users/verify-reset/**",
+                    "/api/v1/users/reset-password/**",
+                    "/api/v1/users/forgot-password-verify/**",
+                    "/api/v1/*/visitor/**",
+                    "/api/v1/test/**",
+                    "/api/v1/debug/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/webjars/**"
+                ).permitAll()
                 .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
