@@ -2,10 +2,9 @@ package com.ms.semicolans.sereportapi.sereportapi.api;
 
 import com.ms.semicolans.sereportapi.sereportapi.entity.main.Supplier;
 import com.ms.semicolans.sereportapi.sereportapi.service.SupplierService;
-import jakarta.annotation.PostConstruct;
+import com.ms.semicolans.sereportapi.sereportapi.util.StandardResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -21,23 +20,16 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    @PostConstruct
-    public void init() {
-        log.error("🚀🚀🚀 SUPPLIER CONTROLLER CREATED 🚀🚀🚀");
+    // ---------- Supplier names list ----------
+    @GetMapping("/api/suppliers/get-all-suppliers-name-list")
+    public StandardResponse getAllSupplierNames() {
+        List<String> names = supplierService.getAllSupplierNames();
+        return new StandardResponse(200, "Success", names);
     }
 
-    // ---------- Unique ping ----------
-    @GetMapping("/api/suppliers/ping")
-    public ResponseEntity<Map<String, String>> ping() {
-        return ResponseEntity.ok(Map.of(
-            "controller", "SupplierController",
-            "status", "alive"
-        ));
-    }
-
-    // ---------- Supplier details with unique marker ----------
+    // ---------- Supplier details ----------
     @GetMapping("/api/suppliers/supplier-details")
-    public ResponseEntity<Map<String, Object>> getSupplierDetails(
+    public StandardResponse getSupplierDetails(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "") String supplierSearch,
@@ -45,7 +37,6 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String invGap,
             @RequestParam(defaultValue = "All") String settlementGap) {
 
-        log.error("### REAL SupplierController.getSupplierDetails() ###");
         List<Supplier> all = supplierService.getAllSuppliers();
 
         Map<String, Object> inner = new LinkedHashMap<>();
@@ -54,23 +45,14 @@ public class SupplierController {
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("controller", "SupplierController");   // UNIQUE MARKER
         response.put("data", inner);
-        return ResponseEntity.ok(response);
+
+        return new StandardResponse(200, "Success", response);
     }
 
-    // ---------- Other endpoints with marker ----------
-    @GetMapping("/api/suppliers/get-all-suppliers-name-list")
-    public ResponseEntity<Map<String, Object>> getAllSupplierNames() {
-        List<String> names = supplierService.getAllSupplierNames();
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("controller", "SupplierController");
-        response.put("data", names);
-        return ResponseEntity.ok(response);
-    }
-
+    // ---------- Creditor details ----------
     @GetMapping("/api/suppliers-creditor/get-creditor-details-list")
-    public ResponseEntity<Map<String, Object>> getCreditorDetailsList(
+    public StandardResponse getCreditorDetailsList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "") String supplierSearch,
@@ -84,13 +66,14 @@ public class SupplierController {
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("controller", "SupplierController");
         response.put("data", inner);
-        return ResponseEntity.ok(response);
+
+        return new StandardResponse(200, "Success", response);
     }
 
+    // ---------- Payable details ----------
     @GetMapping("/api/suppliers/payable-details")
-    public ResponseEntity<Map<String, Object>> getPayableDetails(
+    public StandardResponse getPayableDetails(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "All") String locaCode,
@@ -106,8 +89,8 @@ public class SupplierController {
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("controller", "SupplierController");
         response.put("data", inner);
-        return ResponseEntity.ok(response);
+
+        return new StandardResponse(200, "Success", response);
     }
 }
