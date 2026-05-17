@@ -20,9 +20,10 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    // ---------- Supplier names list (unchanged) ----------
+    // ---------- Supplier names list ----------
     @GetMapping("/api/suppliers/get-all-suppliers-name-list")
     public ResponseEntity<Map<String, Object>> getAllSupplierNames() {
+        log.info("SupplierController: get-all-suppliers-name-list");
         List<String> names = supplierService.getAllSupplierNames();
         return ResponseEntity.ok(Map.of("data", names));
     }
@@ -40,10 +41,8 @@ public class SupplierController {
         log.info("SupplierController: supplier-details");
         List<Supplier> all = supplierService.getAllSuppliers();
 
-        // The Flutter supplier_repo does: response['data'] as Map<String,dynamic>
-        // then the BLoC extracts: data['data'] as List, data['count'], data['totalOutstandingAmount']
         Map<String, Object> inner = new LinkedHashMap<>();
-        inner.put("data", all);                       // the list
+        inner.put("data", all);
         inner.put("count", all.size());
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
 
@@ -61,9 +60,8 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String settlementGap) {
 
         log.info("SupplierController: creditor-details");
-
         Map<String, Object> inner = new LinkedHashMap<>();
-        inner.put("data", Collections.emptyList());   // empty list for now
+        inner.put("data", Collections.emptyList());
         inner.put("count", 0);
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
 
@@ -83,7 +81,6 @@ public class SupplierController {
             @RequestParam(required = false) String dateTo) {
 
         log.info("SupplierController: payable-details");
-
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", Collections.emptyList());
         inner.put("count", 0);
