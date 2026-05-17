@@ -50,19 +50,19 @@ public class ApplicationSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("Configuring security filter chain – JWT filter DISABLED for testing");
+        log.info("Configuring security filter chain – MARKER VERSION 2");
 
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // .addFilterAfter(   ← JWT filter removed for now
-            //     new JwtTokenVerifier(jwtConfig, secretKey),
-            //     org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/**").permitAll()
-                .anyRequest().authenticated());
+                .anyRequest().authenticated())
+            .headers(headers -> headers
+                .addHeaderWriter((request, response) -> 
+                    response.setHeader("X-Security-Version", "v2-permit-all")));
 
         http.authenticationProvider(authenticationProvider());
         return http.build();
