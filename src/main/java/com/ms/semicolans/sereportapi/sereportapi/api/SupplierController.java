@@ -21,28 +21,36 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    // 🚀 This runs when Spring creates the bean
     @PostConstruct
     public void init() {
-        log.error("🚀🚀🚀 SupplierController has been created by Spring! 🚀🚀🚀");
+        log.error("🚀🚀🚀 SupplierController BEAN CREATED 🚀🚀🚀");
     }
 
-    // ---------- Ping ----------
+    // ---- PUBLIC TEST (no /api/) ----
+    @GetMapping("/public-supplier-details")
+    public ResponseEntity<Map<String, Object>> publicTest() {
+        log.error("### publicTest() called ###");
+        List<Supplier> all = supplierService.getAllSuppliers();
+        Map<String, Object> inner = new LinkedHashMap<>();
+        inner.put("data", all);
+        inner.put("count", all.size());
+        inner.put("totalOutstandingAmount", BigDecimal.ZERO);
+        return ResponseEntity.ok(Map.of("data", inner));
+    }
+
+    // ---- /api/ endpoints ----
     @GetMapping("/api/suppliers/ping")
     public ResponseEntity<String> ping() {
         log.error("### SupplierController.ping() called ###");
         return ResponseEntity.ok("SupplierController is alive");
     }
 
-    // ---------- Supplier names list ----------
     @GetMapping("/api/suppliers/get-all-suppliers-name-list")
     public ResponseEntity<Map<String, Object>> getAllSupplierNames() {
-        log.info("SupplierController: get-all-suppliers-name-list");
         List<String> names = supplierService.getAllSupplierNames();
         return ResponseEntity.ok(Map.of("data", names));
     }
 
-    // ---------- Supplier details ----------
     @GetMapping("/api/suppliers/supplier-details")
     public ResponseEntity<Map<String, Object>> getSupplierDetails(
             @RequestParam(defaultValue = "0") int page,
@@ -52,18 +60,15 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String invGap,
             @RequestParam(defaultValue = "All") String settlementGap) {
 
-        log.error("### SupplierController.getSupplierDetails() called ###");
+        log.error("### getSupplierDetails() called ###");
         List<Supplier> all = supplierService.getAllSuppliers();
-
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", all);
         inner.put("count", all.size());
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
-
         return ResponseEntity.ok(Map.of("data", inner));
     }
 
-    // ---------- Creditor details ----------
     @GetMapping("/api/suppliers-creditor/get-creditor-details-list")
     public ResponseEntity<Map<String, Object>> getCreditorDetailsList(
             @RequestParam(defaultValue = "0") int page,
@@ -73,16 +78,14 @@ public class SupplierController {
             @RequestParam(defaultValue = "All") String invGap,
             @RequestParam(defaultValue = "All") String settlementGap) {
 
-        log.error("### SupplierController.getCreditorDetailsList() called ###");
+        log.error("### getCreditorDetailsList() called ###");
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", Collections.emptyList());
         inner.put("count", 0);
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
-
         return ResponseEntity.ok(Map.of("data", inner));
     }
 
-    // ---------- Payable details ----------
     @GetMapping("/api/suppliers/payable-details")
     public ResponseEntity<Map<String, Object>> getPayableDetails(
             @RequestParam(defaultValue = "0") int page,
@@ -94,12 +97,11 @@ public class SupplierController {
             @RequestParam(required = false) String dateFrom,
             @RequestParam(required = false) String dateTo) {
 
-        log.error("### SupplierController.getPayableDetails() called ###");
+        log.error("### getPayableDetails() called ###");
         Map<String, Object> inner = new LinkedHashMap<>();
         inner.put("data", Collections.emptyList());
         inner.put("count", 0);
         inner.put("totalOutstandingAmount", BigDecimal.ZERO);
-
         return ResponseEntity.ok(Map.of("data", inner));
     }
 }
